@@ -22,5 +22,5 @@ jobs:
           aws-region: eu-west-1 # use your region here.
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_REGION: eu-west-1
+          AWS_REGION: 'eu-west-1'
           SOURCE_DIR: 'website'
