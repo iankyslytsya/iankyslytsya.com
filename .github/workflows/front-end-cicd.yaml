@@ -22,4 +22,4 @@ jobs:
           aws-region: eu-west-1 # use your region here.
       - name: Sync files to S3 bucket
         run: |
-          aws s3 sync website s3://iankyslytsya.com
+          aws s3 sync website s3://arn:aws:s3:::iankyslytsya.com
