@@ -1,0 +1,20 @@
+terraform {
+    cloud {
+    organization = "iankyslytsya"
+
+    workspaces {
+      name = "GitHubActions-iankyslytsya"
+    }
+ }
+    required_providers {
+        aws = {
+            version = ">=4.9.0"
+            source = "hashicorp/aws"
+
+        }
+    }
+}
+provider "aws" {
+    profile = "default"
+    region = "eu-west-1"
+}
