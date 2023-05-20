@@ -19,7 +19,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::916840092047:role/GithubActionsOIDC-Role-M6H2960UCSGC
           role-duration-seconds: 900 # the ttl of the session, in seconds.
-          aws-region: eu-west-1 # use your region here.
+          aws-region: eu-west-1 
       - name: Sync files to S3 bucket
         run: |
           aws s3 sync website s3://iankyslytsya.com
