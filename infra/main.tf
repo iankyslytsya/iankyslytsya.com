@@ -179,7 +179,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 }
 
 resource "aws_lambda_event_source_mapping" "api_trigger" {
-  event_source_arn  = aws_apigatewayv2_api.api.execution_arn
+  event_source_arn  = aws_apigatewayv2_api.api[0].execution_arn
   function_name     = aws_lambda_function.CloudResumeFunctionTF.function_name
   starting_position = "LATEST"
   batch_size        = 10
