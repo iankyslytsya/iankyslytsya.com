@@ -21,7 +21,9 @@ jobs:
           role-duration-seconds: 900 # the ttl of the session, in seconds.
           aws-region: eu-west-1 
       - name: Sync files to S3 bucket
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
           aws s3 sync website s3://iankyslytsya.com
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths /*
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /*
 
