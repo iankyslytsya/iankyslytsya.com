@@ -1,29 +1,239 @@
+resource "aws_s3_bucket" "bucket" {
+  bucket = "iankyslytsya.com"
+  acl    = null
+
+  acceleration_status           = ""
+  arn                          = "arn:aws:s3:::iankyslytsya.com"
+  bucket_domain_name           = "iankyslytsya.com.s3.amazonaws.com"
+  bucket_prefix                = ""
+  bucket_regional_domain_name  = "iankyslytsya.com.s3.eu-west-1.amazonaws.com"
+  cors_rule                    = []
+  force_destroy                = null
+
+  grant {
+    id          = "2232876dfa25bfe142b8d9c04ef853053b60e7dcc75a84e2d280b50c39a19f67"
+    permissions = ["FULL_CONTROL"]
+    type        = "CanonicalUser"
+    uri         = ""
+  }
+
+  hosted_zone_id            = "Z1BKCTXD74EZPE"
+  id                        = "iankyslytsya.com"
+  lifecycle_rule            = []
+  logging {
+    target_bucket = "logs.iankyslytsya.com"
+    target_prefix = "logs/"
+  }
+
+  object_lock_configuration  = []
+  object_lock_enabled        = false
+  policy = <<POLICY
+{
+  "Statement": [
+    {
+      "Action": "s3:GetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "arn:aws:s3:::iankyslytsya.com/*",
+      "Sid": "MakeItPublic"
+    }
+  ],
+  "Version": "2012-10-17"
+}
+POLICY
+
+  replication_configuration = []
+  request_payer              = "BucketOwner"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id   = ""
+        sse_algorithm = "AES256"
+      }
+      bucket_key_enabled  = true
+    }
+  }
+
+  tags      = {}
+  tags_all  = {}
+  timeouts  = null
+
+  versioning {
+    enabled    = false
+    mfa_delete = false
+  }
+
+  website {
+    error_document                 = ""
+    index_document                 = "resume.html"
+    redirect_all_requests_to       = ""
+    routing_rules                  = ""
+  }
+
+  website_domain         = "s3-website-eu-west-1.amazonaws.com"
+  website_endpoint       = "iankyslytsya.com.s3-website-eu-west-1.amazonaws.com"
+}
+
+resource "aws_s3_bucket_ownership_controls" "bucket" {
+  bucket = "iankyslytsya.com"
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "bucket" {
+  bucket = "iankyslytsya.com"
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_website_configuration" "bucket" {
+  bucket                = "iankyslytsya.com"
+  error_document        = []
+  expected_bucket_owner = ""
+  index_document {
+    suffix = "resume.html"
+  }
+  redirect_all_requests_to = []
+  routing_rule             = []
+  routing_rules            = ""
+}
+
+resource "aws_s3_bucket" "bucket" {
+  bucket = "www.iankyslytsya.com"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+        kms_master_key_id = ""
+      }
+      bucket_key_enabled = true
+    }
+  }
+
+  website {
+    redirect_all_requests_to {
+      host_name = "iankyslytsya.com"
+      protocol  = "http"
+    }
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "bucket" {
+  bucket = "www.iankyslytsya.com"
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_website" "bucket" {
+  bucket = "www.iankyslytsya.com"
+  provider = aws
+
+  routing_rules = ""
+}
+
+resource "aws_dynamodb_table" "table" {
+  arn                      = "arn:aws:dynamodb:eu-west-1:916840092047:table/VisitorCounterTable"
+  name                     = "VisitorCounterTable"
+  billing_mode             = "PROVISIONED"
+  read_capacity            = 5
+  write_capacity           = 5
+  hash_key                 = "visitor_id"
+  range_key                = null
+  stream_enabled           = false
+  stream_view_type         = ""
+  table_class              = "STANDARD"
+  deletion_protection_enabled = false
+}
+
+resource "aws_apigatewayv2_api" "api" {
+  name          = "CloudResumeFunction-API"
+  protocol_type = "HTTP"
+  api_endpoint  = "https://tgp5ldaxah.execute-api.eu-west-1.amazonaws.com"
+  arn           = "arn:aws:apigateway:eu-west-1::/apis/tgp5ldaxah"
+  description   = "API as trigger for CloudResume Lambda"
+
+  cors_configuration {
+    allow_credentials = false
+    allow_origins     = ["*"]
+  }
+}
+
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "CloudResumeFunction-role-tf"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "lambda_execution_policy" {
+  name        = "CloudResumeFunction-policy"
+  description = "Policy for Lambda execution role"
+  policy      = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "arn:aws:dynamodb:eu-west-1:916840092047:table/VisitorCounterTable"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = aws_iam_policy.lambda_execution_policy.arn
+}
+
+resource "aws_lambda_event_source_mapping" "api_trigger" {
+  event_source_arn  = aws_apigatewayv2_api.api.execution_arn
+  function_name     = aws_lambda_function.CloudResumeFunctionTF.function_name
+  starting_position = "LATEST"
+  batch_size        = 10
+}
+
 resource "aws_lambda_function" "CloudResumeFunctionTF" {
   filename         = data.archive_file.zip.output_path
   source_code_hash = data.archive_file.zip.output_base64sha256
   function_name    = "CloudResumeFunctionTF"
-  role             = aws_iam_role.cloudresumefunction-role-tf.arn
+  role             = aws_iam_role.lambda_execution_role.name
   handler          = "func.handler"
   runtime          = "python3.8"
+
+  depends_on = [aws_lambda_event_source_mapping.api_trigger]
 }
 
-resource "aws_iam_role" "cloudresumefunction-role-tf" {
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-                "Service": "lambda.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
-}
-EOF
-}
 
 data "archive_file" "zip" {
   type        = "zip"
