@@ -91,13 +91,6 @@ resource "aws_s3_bucket" "www_bucket" {
       bucket_key_enabled = true
     }
   }
-
-  website {
-    redirect_all_requests_to {
-      host_name = "iankyslytsya.com"
-      protocol  = "http"
-    }
-  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "www_bucket_ownership_controls" {
