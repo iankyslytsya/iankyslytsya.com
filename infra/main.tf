@@ -124,26 +124,6 @@ resource "aws_apigatewayv2_api" "api" {
     allow_credentials = false
     allow_origins     = ["*"]
   }
-
-  lifecycle {
-    ignore_changes = [cors_configuration]
-  }
-}
-
-data "aws_apigatewayv2_api" "existing_api" {
-  name = aws_apigatewayv2_api.api.name
-}
-
-resource "aws_apigatewayv2_deployment" "deployment" {
-  count      = data.aws_apigatewayv2_api.existing_api.id ? 0 : 1
-  api_id     = aws_apigatewayv2_api.api.id
-  stage_name = "dev"
-}
-
-resource "aws_apigatewayv2_stage" "stage" {
-  api_id      = aws_apigatewayv2_api.api.id
-  name        = "dev"
-  auto_deploy = true
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
