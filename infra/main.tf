@@ -113,11 +113,6 @@ resource "aws_dynamodb_table" "table" {
     type = "S"
   }
 
-  attribute {
-    name = "visitor_counter"
-    type = "N"
-  }
-
 }
 
 
