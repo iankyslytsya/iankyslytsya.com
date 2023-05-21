@@ -115,12 +115,7 @@ resource "aws_dynamodb_table" "table" {
 
 }
 
-data "aws_apigatewayv2_api" "existing_api" {
-  name = "CloudResumeFunction-API"
-}
-
 resource "aws_apigatewayv2_api" "api" {
-  count = data.aws_apigatewayv2_api.existing_api.exists ? 0 : 1
   name          = "CloudResumeFunction-API"
   protocol_type = "HTTP"
   description   = "API as trigger for CloudResume Lambda"
@@ -129,6 +124,26 @@ resource "aws_apigatewayv2_api" "api" {
     allow_credentials = false
     allow_origins     = ["*"]
   }
+
+  lifecycle {
+    ignore_changes = [cors_configuration]
+  }
+}
+
+data "aws_apigatewayv2_api" "existing_api" {
+  name = aws_apigatewayv2_api.api.name
+}
+
+resource "aws_apigatewayv2_deployment" "deployment" {
+  count      = data.aws_apigatewayv2_api.existing_api.id ? 0 : 1
+  api_id     = aws_apigatewayv2_api.api.id
+  stage_name = "dev"
+}
+
+resource "aws_apigatewayv2_stage" "stage" {
+  api_id      = aws_apigatewayv2_api.api.id
+  name        = "dev"
+  auto_deploy = true
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
@@ -181,7 +196,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 }
 
 resource "aws_lambda_event_source_mapping" "api_trigger" {
-  event_source_arn  = aws_apigatewayv2_api.api[0].execution_arn
+  event_source_arn  = aws_apigatewayv2_api.api.execution_arn
   function_name     = aws_lambda_function.CloudResumeFunctionTF.function_name
   starting_position = "LATEST"
   batch_size        = 10
