@@ -7,7 +7,6 @@ resource "aws_s3_bucket" "bucket" {
   bucket_domain_name           = "iankyslytsya.com.s3.amazonaws.com"
   bucket_prefix                = ""
   bucket_regional_domain_name  = "iankyslytsya.com.s3.eu-west-1.amazonaws.com"
-  cors_rule                    = []
   force_destroy                = null
 
   grant {
@@ -19,13 +18,11 @@ resource "aws_s3_bucket" "bucket" {
 
   hosted_zone_id            = "Z1BKCTXD74EZPE"
   id                        = "iankyslytsya.com"
-  lifecycle_rule            = []
   logging {
     target_bucket = "logs.iankyslytsya.com"
     target_prefix = "logs/"
   }
 
-  object_lock_configuration  = []
   object_lock_enabled        = false
   policy = <<POLICY
 {
@@ -42,7 +39,6 @@ resource "aws_s3_bucket" "bucket" {
 }
 POLICY
 
-  replication_configuration = []
   request_payer              = "BucketOwner"
 
   server_side_encryption_configuration {
@@ -57,7 +53,6 @@ POLICY
 
   tags      = {}
   tags_all  = {}
-  timeouts  = null
 
   versioning {
     enabled    = false
@@ -65,10 +60,7 @@ POLICY
   }
 
   website {
-    error_document                 = ""
     index_document                 = "resume.html"
-    redirect_all_requests_to       = ""
-    routing_rules                  = ""
   }
 
   website_domain         = "s3-website-eu-west-1.amazonaws.com"
@@ -131,13 +123,6 @@ resource "aws_s3_bucket_ownership_controls" "www_bucket_ownership_controls" {
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
-}
-
-resource "aws_s3_bucket_website" "www_bucket_website" {
-  bucket = "www.iankyslytsya.com"
-  provider = aws
-
-  routing_rules = ""
 }
 
 resource "aws_dynamodb_table" "table" {
