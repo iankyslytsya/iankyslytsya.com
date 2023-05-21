@@ -107,7 +107,6 @@ resource "aws_dynamodb_table" "table" {
   read_capacity            = 5
   write_capacity           = 5
   hash_key                 = "visitor_id"
-  range_key                = null
   stream_enabled           = false
   stream_view_type         = ""
   table_class              = "STANDARD"
@@ -185,7 +184,7 @@ resource "aws_lambda_function" "CloudResumeFunctionTF" {
   filename         = data.archive_file.zip.output_path
   source_code_hash = data.archive_file.zip.output_base64sha256
   function_name    = "CloudResumeFunctionTF"
-  role             = aws_iam_role.lambda_execution_role.name
+  role             = aws_iam_role.lambda_execution_role.arn
   handler          = "func.handler"
   runtime          = "python3.8"
 }
