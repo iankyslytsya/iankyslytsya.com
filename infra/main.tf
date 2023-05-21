@@ -106,12 +106,18 @@ resource "aws_dynamodb_table" "table" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
   write_capacity = 5
+  hash_key       = "visitor_id"
 
   attribute {
     name = "visitor_id"
     type = "S"
   }
-  tags = {}
+
+  attribute {
+    name = "visitor_counter"
+    type = "N"
+  }
+
 }
 
 
