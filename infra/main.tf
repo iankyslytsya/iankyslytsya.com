@@ -1,12 +1,6 @@
 resource "aws_s3_bucket" "bucket" {
   bucket = "iankyslytsya.com"
   acl    = null
-
-  acceleration_status           = ""
-  arn                          = "arn:aws:s3:::iankyslytsya.com"
-  bucket_domain_name           = "iankyslytsya.com.s3.amazonaws.com"
-  bucket_prefix                = ""
-  bucket_regional_domain_name  = "iankyslytsya.com.s3.eu-west-1.amazonaws.com"
   force_destroy                = null
 
   grant {
@@ -15,9 +9,6 @@ resource "aws_s3_bucket" "bucket" {
     type        = "CanonicalUser"
     uri         = ""
   }
-
-  hosted_zone_id            = "Z1BKCTXD74EZPE"
-  id                        = "iankyslytsya.com"
   logging {
     target_bucket = "logs.iankyslytsya.com"
     target_prefix = "logs/"
@@ -62,9 +53,6 @@ POLICY
   website {
     index_document                 = "resume.html"
   }
-
-  website_domain         = "s3-website-eu-west-1.amazonaws.com"
-  website_endpoint       = "iankyslytsya.com.s3-website-eu-west-1.amazonaws.com"
 }
 
 resource "aws_s3_bucket_ownership_controls" "bucket_ownership" {
@@ -86,14 +74,9 @@ resource "aws_s3_bucket_public_access_block" "bucket_public_access_block" {
 
 resource "aws_s3_bucket_website_configuration" "bucket_website_configuration" {
   bucket                = "iankyslytsya.com"
-  error_document        = []
-  expected_bucket_owner = ""
   index_document {
     suffix = "resume.html"
   }
-  redirect_all_requests_to = []
-  routing_rule             = []
-  routing_rules            = ""
 }
 
 resource "aws_s3_bucket" "www_bucket" {
