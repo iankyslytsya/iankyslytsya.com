@@ -119,6 +119,7 @@ resource "aws_dynamodb_table" "table" {
 
 resource "aws_apigatewayv2_api" "api" {
   name          = "CloudResumeFunction-API"
+  count = 1
   protocol_type = "HTTP"
   description   = "API as trigger for CloudResume Lambda"
 
