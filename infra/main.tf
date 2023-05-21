@@ -102,16 +102,34 @@ resource "aws_s3_bucket_ownership_controls" "www_bucket_ownership_controls" {
 }
 
 resource "aws_dynamodb_table" "table" {
-  name                     = "VisitorCounterTable"
-  billing_mode             = "PROVISIONED"
-  read_capacity            = 5
-  write_capacity           = 5
-  hash_key                 = "visitor_id"
-  stream_enabled           = false
-  stream_view_type         = ""
-  table_class              = "STANDARD"
-  deletion_protection_enabled = false
+  name             = "VisitorCounterTable"
+  billing_mode     = "PROVISIONED"
+  read_capacity    = 5
+  write_capacity   = 5
+
+  attribute {
+    name = "visitor_id"
+    type = "S"
+  }
+
+  key {
+    attribute_name = "visitor_id"
+    type           = "HASH"
+  }
+
+  attribute {
+    name = "visitor_counter"
+    type = "N"
+  }
+
+  provisioned_throughput {
+    read_capacity  = 5
+    write_capacity = 5
+  }
+
+  tags = {}
 }
+
 
 resource "aws_apigatewayv2_api" "api" {
   name          = "CloudResumeFunction-API"
