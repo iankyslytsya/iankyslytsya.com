@@ -141,7 +141,6 @@ resource "aws_s3_bucket_website" "www_bucket_website" {
 }
 
 resource "aws_dynamodb_table" "table" {
-  arn                      = "arn:aws:dynamodb:eu-west-1:916840092047:table/VisitorCounterTable"
   name                     = "VisitorCounterTable"
   billing_mode             = "PROVISIONED"
   read_capacity            = 5
@@ -157,8 +156,6 @@ resource "aws_dynamodb_table" "table" {
 resource "aws_apigatewayv2_api" "api" {
   name          = "CloudResumeFunction-API"
   protocol_type = "HTTP"
-  api_endpoint  = "https://tgp5ldaxah.execute-api.eu-west-1.amazonaws.com"
-  arn           = "arn:aws:apigateway:eu-west-1::/apis/tgp5ldaxah"
   description   = "API as trigger for CloudResume Lambda"
 
   cors_configuration {
