@@ -75,7 +75,7 @@ POLICY
   website_endpoint       = "iankyslytsya.com.s3-website-eu-west-1.amazonaws.com"
 }
 
-resource "aws_s3_bucket_ownership_controls" "bucket" {
+resource "aws_s3_bucket_ownership_controls" "bucket_ownership" {
   bucket = "iankyslytsya.com"
 
   rule {
@@ -83,7 +83,7 @@ resource "aws_s3_bucket_ownership_controls" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "bucket" {
+resource "aws_s3_bucket_public_access_block" "bucket_public_access_block" {
   bucket = "iankyslytsya.com"
 
   block_public_acls       = false
@@ -92,7 +92,7 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_website_configuration" "bucket" {
+resource "aws_s3_bucket_website_configuration" "bucket_website_configuration" {
   bucket                = "iankyslytsya.com"
   error_document        = []
   expected_bucket_owner = ""
@@ -104,7 +104,7 @@ resource "aws_s3_bucket_website_configuration" "bucket" {
   routing_rules            = ""
 }
 
-resource "aws_s3_bucket" "bucket" {
+resource "aws_s3_bucket" "www_bucket" {
   bucket = "www.iankyslytsya.com"
 
   server_side_encryption_configuration {
@@ -125,7 +125,7 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_ownership_controls" "bucket" {
+resource "aws_s3_bucket_ownership_controls" "www_bucket_ownership_controls" {
   bucket = "www.iankyslytsya.com"
 
   rule {
@@ -133,7 +133,7 @@ resource "aws_s3_bucket_ownership_controls" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_website" "bucket" {
+resource "aws_s3_bucket_website" "www_bucket_website" {
   bucket = "www.iankyslytsya.com"
   provider = aws
 
