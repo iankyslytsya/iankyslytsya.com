@@ -119,11 +119,45 @@ resource "aws_apigatewayv2_api" "api" {
   name          = "CloudResumeFunction-API"
   protocol_type = "HTTP"
   description   = "API as trigger for CloudResume Lambda"
+}
 
-  cors_configuration {
-    allow_credentials = false
-    allow_origins     = ["*"]
+resource "aws_apigatewayv2_stage" "stage" {
+  api_id      = aws_apigatewayv2_api.api.id
+  name        = "beta"
+  auto_deploy = true
+
+  tags = {
+    Name = "Beta Stage"
   }
+}
+
+resource "aws_apigatewayv2_deployment" "deployment" {
+  api_id      = aws_apigatewayv2_api.api.id
+  description = "API Gateway Deployment"
+
+  triggers = {
+    redeployment_trigger = sha256(jsonencode(aws_lambda_function.CloudResumeFunctionTF))
+  }
+}
+
+resource "aws_apigatewayv2_integration" "lambda_integration" {
+  api_id               = aws_apigatewayv2_api.api.id
+  integration_type     = "AWS_PROXY"
+  integration_uri      = aws_lambda_function.CloudResumeFunctionTF.invoke_arn
+  integration_method   = "POST"
+}
+
+resource "aws_apigatewayv2_route" "default_route" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "$default"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "catch_all_route" {
+  api_id        = aws_apigatewayv2_api.api.id
+  route_key     = "{proxy+}"
+  target        = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization = "NONE"
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
@@ -173,13 +207,6 @@ EOF
 resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
   role       = aws_iam_role.lambda_execution_role.name
   policy_arn = aws_iam_policy.lambda_execution_policy.arn
-}
-
-resource "aws_lambda_event_source_mapping" "api_trigger" {
-  event_source_arn  = aws_apigatewayv2_api.api.execution_arn
-  function_name     = aws_lambda_function.CloudResumeFunctionTF.function_name
-  starting_position = "LATEST"
-  batch_size        = 10
 }
 
 resource "aws_lambda_function" "CloudResumeFunctionTF" {
