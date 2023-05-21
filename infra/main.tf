@@ -102,12 +102,24 @@ resource "aws_s3_bucket_ownership_controls" "www_bucket_ownership_controls" {
 }
 
 resource "aws_dynamodb_table" "table" {
-  name             = "VisitorCounterTable"
-  billing_mode     = "PROVISIONED"
-  read_capacity    = 5
-  write_capacity   = 5
+  name           = "VisitorCounterTable"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 5
+  write_capacity = 5
+
+  attribute {
+    name = "visitor_id"
+    type = "S"
+  }
+
+  key_schema {
+    attribute_name = "visitor_id"
+    key_type       = "HASH"
+  }
+
   tags = {}
 }
+
 
 
 resource "aws_apigatewayv2_api" "api" {
