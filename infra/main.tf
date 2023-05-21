@@ -111,12 +111,6 @@ resource "aws_dynamodb_table" "table" {
     name = "visitor_id"
     type = "S"
   }
-
-  key_schema {
-    attribute_name = "visitor_id"
-    key_type       = "HASH"
-  }
-
   tags = {}
 }
 
