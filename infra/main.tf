@@ -202,7 +202,7 @@ resource "aws_lambda_function" "CloudResumeFunctionTF" {
   source_code_hash = data.archive_file.zip.output_base64sha256
   function_name    = "CloudResumeFunctionTF"
   role             = aws_iam_role.lambda_execution_role.arn
-  handler          = "func.handler"
+  handler          = "func.lambda_handler"
   runtime          = "python3.8"
 }
 
