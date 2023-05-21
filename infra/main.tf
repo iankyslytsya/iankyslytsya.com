@@ -230,8 +230,6 @@ resource "aws_lambda_function" "CloudResumeFunctionTF" {
   role             = aws_iam_role.lambda_execution_role.name
   handler          = "func.handler"
   runtime          = "python3.8"
-
-  depends_on = [aws_lambda_event_source_mapping.api_trigger]
 }
 
 
